@@ -1,10 +1,10 @@
 {
-  "name": "ticker",
+  "name": "timer",
   "version": "0.0.1",
   "author": "Cole Reed",
-  "description": "Fire a tick event every X milliseconds",
-  "filename": "ticker",
-  "main": "lib/ticker.js",
+  "description": "Event based timer",
+  "filename": "timer",
+  "main": "lib/timer.js",
   "browserify": {
     "transform": [
       "babelify"
@@ -34,8 +34,9 @@
     "karma-osx-reporter": "^0.2.0",
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-phantomjs-shim": "^1.0.0",
-    "ticker": "git://github.com/ichabodcole/ticker",
     "watchify": "^2.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "ticker": "git://github.com/ichabodcole/ticker"
+  }
 }
