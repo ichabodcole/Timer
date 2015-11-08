@@ -1,6 +1,6 @@
 {
-  "name": "timer",
-  "version": "0.0.1",
+  "name": "@ichabodcole/timer",
+  "version": "0.0.2",
   "author": "Cole Reed",
   "description": "Event based timer",
   "filename": "timer",
@@ -11,6 +11,7 @@
     ]
   },
   "scripts": {
+    "start": "gulp tdd",
     "test": "gulp test"
   },
   "keywords": [
@@ -37,6 +38,6 @@
     "watchify": "^2.0.0"
   },
   "dependencies": {
-    "ticker": "git://github.com/ichabodcole/ticker"
+    "@ichabodcole/ticker": "0.0.2"
   }
 }
