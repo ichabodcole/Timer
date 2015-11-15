@@ -1,5 +1,5 @@
 
-import { Timer, TimerEvent } from '../lib/timer';
+import { Timer, TimerEvent } from '../src/timer';
 
 describe ('Timer', function() {
     var tm, options, model, update;
@@ -21,7 +21,7 @@ describe ('Timer', function() {
         it ('should not throw an error', function() {
             expect(function() {
                 new Timer();
-            }).not.toThrow;
+            }).not.toThrow();
         });
     });
 
@@ -31,8 +31,8 @@ describe ('Timer', function() {
             describe('the default state', function() {
                 it('should be STOPPED', function() {
                     expect(tm.state).toBe(Timer.STOPPED);
-                })
-            })
+                });
+            });
 
             describe ('after calling timer.stop', function() {
                 it(' should return Timer.STOPPED', function() {
