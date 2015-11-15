@@ -13,33 +13,23 @@ module.exports = function(config) {
     frameworks: ['jasmine', 'browserify', 'phantomjs-shim'],
 
 
-    browserify: {
-        debug: true,
-        transform: ['babelify'],
-        configure: function(bundle) {
-            bundle.on('prebundle', function() {
-                bundle.add(__dirname + '/node_modules/babelify/polyfill')
-            })
-        }
-    },
-
     // list of files / patterns to load in the browser
     files: [
-        'lib/**/*.js',
+        'node_modules/babel-polyfill/dist/polyfill.js',
+        'src/**/*.js',
         'test/**/*.spec.js'
     ],
 
 
     // list of files to exclude
-    exclude: [
-    ],
+    exclude: [],
 
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-        'lib/**/*.js': ['browserify'],
-        'test/**/*.spec.js': ['browserify']
+        'src/**/*.js': ['jshint', 'browserify'],
+        'test/**/*.spec.js': ['jshint', 'browserify']
     },
 
 
@@ -73,6 +63,17 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: false,
+
+
+    // Custom preprocessor configuration
+    jshintPreprocessor: {
+      jshintrc: './.jshintrc'
+    },
+
+    browserify: {
+        debug: true,
+        transform: [['babelify', { 'presets': ['es2015'] }]]
+    }
   });
 };
