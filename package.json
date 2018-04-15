@@ -1,8 +1,8 @@
 {
   "name": "@ichabodcole/timer",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "author": "Cole Reed",
-  "description": "Event based timer",
+  "description": "A simple event based timer.",
   "filename": "timer",
   "main": "lib/timer.js",
   "scripts": {
