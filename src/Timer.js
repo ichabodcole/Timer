@@ -1,152 +1,115 @@
-import { Ticker, TickerEvent } from '@ichabodcole/ticker';
+import {
+  Ticker,
+  TickerEvent,
+  TickerState
+} from '@ichabodcole/ticker'
 
-var TimerEvent = Object.assign({
-    // Timer event types
-    PAUSE: 'timer:pause',
-    COMPLETE: 'timer:complete'
-}, TickerEvent);
+export const TimerEvent = Object.assign({
+  COMPLETE: 'COMPLETE',
+  RESET: 'RESET'
+}, TickerEvent)
 
-class Timer extends Ticker {
-    constructor (options={}) {
-        super(options);
+export const TimerState = Object.assign({}, TickerState)
 
-        this.timeAtPause = 0;
+export class Timer extends Ticker {
+  constructor (duration, interval = 50) {
+    super(interval)
 
-        this.model.state       = Timer.STOPPED;
-        this.model.startTime   = null;
-        this.model.currentTime = this.model.currentTime || null;
-        this.model.progress    = this.model.progress || null;
-        this.model.duration    = this.model.duration || null;
-    }
+    this.duration = duration
+    this._startTime = null
+    this._stopStartTime = 0
+  }
 
-    start () {
-        if (this.state !== Timer.TICKING) {
-            if (this.duration > 0 && this.duration != null) {
-                this.state = Timer.TICKING;
-                this.createInterval();
-                this.emit(TimerEvent.START);
-                this.startTime = Date.now();
-                // reset the pause time variables
-                this.timeAtPause = 0;
-            } else {
-                throw new Error('Timer: valid duration must be set before calling start');
-            }
+  start () {
+    if (this.state !== TimerState.TICKING) {
+      if (this.duration > 0 && this.duration != null) {
+        const now = Date.now()
+
+        if (this.state === TimerState.STOPPED) {
+          this._startTime = this._startTime + (now - this._stopStartTime)
+          this._stopStartTime = 0
         }
-    }
 
-    pause () {
-        if (this.state === Timer.TICKING) {
-            this.state = Timer.PAUSED;
-            this.timeAtPause = this.currentTime;
-            this.destroyInterval();
-            this.emit(TimerEvent.PAUSE);
-        } else if (this.state === Timer.PAUSED) {
-            this.start();
+        this.state = TimerState.TICKING
+        this.__createInterval()
+        this.emit(TimerEvent.START)
+
+        if (this._startTime === null) {
+          this._startTime = now
         }
+
+        this.tick()
+      } else {
+        throw new Error('Timer:start() ~ Valid duration must be set before calling start. Try a number greater than 0')
+      }
+    }
+  }
+
+  stop () {
+    if (this.state === TimerState.TICKING) {
+      this.state = TimerState.STOPPED
+      this._stopStartTime = Date.now()
+      this.__destroyInterval()
+      this.emit(TimerEvent.STOP)
+    }
+  }
+
+  reset () {
+    this.state = TimerState.STOPPED
+    this.__destroyInterval()
+    this.emit(TimerEvent.RESET)
+    this._stopStartTime = 0
+    this._startTime = null
+  }
+
+  tick () {
+    const isComplete = this.timeElapsed >= this.duration
+
+    const data = {
+      duration: this.duration,
+      timeElapsed: this.timeElapsed,
+      progress: this.progress
     }
 
-    stop () {
-        this.state = Timer.STOPPED;
-        this.destroyInterval();
-        this.emit(TimerEvent.STOP);
-        this.timeAtPause = 0;
+    this.emit(TimerEvent.TICK, data)
+
+    if (isComplete) {
+      this.emit(TimerEvent.COMPLETE)
+      this.reset()
     }
 
-    tick () {
-        var data;
-        var now = Date.now();
-        var currentTime = (now - this.startTime);
+    return data
+  }
 
-        // Stop the Timer and broadcast the COMPLETE event type
-        // if currentTime is equal to or greater than duration.
-        if(currentTime >= this.duration) {
-            this.stop();
+  get timeElapsed () {
+    return (this._startTime !== null)
+      ? Math.min((Date.now() - this._startTime), this.duration)
+      : 0
+  }
 
-            data = {
-                duration: this.duration,
-                currentTime: this.duration,
-                progress: 1
-            };
+  set timeElapsed (milliseconds) {
+    if (milliseconds >= 0) {
+      if (milliseconds <= this.duration) {
+        this._startTime = Date.now() - milliseconds
+      } else {
+        throw (new Error(`Timer:timeElapsed ~ Should not be greater than duration (${this.duration}), was (${milliseconds})`))
+      }
+    } else {
+      throw (new Error(`Timer:timeElapsed ~ Should not be less than 0, was (${milliseconds})`))
+    }
+  }
 
-            this.emit(TimerEvent.TICK, data);
-            this.emit(TimerEvent.COMPLETE);
+  get progress () {
+    return Math.min((1 / this.duration) * this.timeElapsed, 1)
+  }
 
-        } else {
-            this.currentTime = currentTime;
-            this.progress = (1 / this.duration) * this.currentTime;
-
-            data = {
-                duration: this.duration,
-                currentTime: this.currentTime,
-                progress: this.progress
-            };
-
-            this.emit(TimerEvent.TICK, data);
-        }
+  set progress (value) {
+    if (value < 0 || value > 1) {
+      throw new Error(`Timer:progress ~ Should be between 0 and 1, was (${value})`)
     }
 
-    set state(state) {
-        this.model.state = state;
-    }
-
-    get state() {
-        return this.model.state;
-    }
-
-    set startTime (milliseconds) {
-        this.model.startTime = milliseconds - this.timeAtPause;
-    }
-
-    get startTime () {
-        return this.model.startTime;
-    }
-
-    set duration (milliseconds) {
-        if (milliseconds > 0) {
-            this.model.duration = milliseconds;
-        } else {
-            throw new Error(`Timer: duration (${milliseconds}) must be greater than 0`);
-        }
-    }
-
-    get duration () {
-        return this.model.duration;
-    }
-
-    set currentTime (milliseconds) {
-        if (milliseconds >= 0) {
-            if (milliseconds <= this.duration) {
-                this.model.currentTime = milliseconds;
-            } else {
-                throw(new Error(`Timer: currentTime (${milliseconds}) cannot be greater than duration (${this.duration})`));
-            }
-        } else {
-            throw(new Error(`Timer: currentTime (${milliseconds}) cannot be less than 0`));
-        }
-    }
-
-    get currentTime () {
-        return this.model.currentTime;
-    }
-
-    set progress (progress) {
-        if (progress >= 0 && progress <= 1) {
-            this.model.progress = progress;
-        } else {
-            throw new Error(`Timer: progress value (${progress}) must be between 0 and 1`);
-        }
-    }
-
-    get progress () {
-        return this.model.progress;
-    }
+    this.timeElapsed = this.duration * value
+  }
 }
 
-// Timer states
-Timer.PAUSED   = 'paused';
-
-export default Timer;
-export {
-    TimerEvent,
-    Timer
-};
+export default Timer
