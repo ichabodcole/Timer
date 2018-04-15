@@ -219,12 +219,26 @@ describe('Timer', () => {
         expect(tm.emit).not.toHaveBeenCalledWith(TimerEvent.START)
       })
 
+      it('should fire the first tick immediately', () => {
+        spyOn(tm, 'emit')
+        tm.start()
+        tm.stop()
+
+        const tickEventData = {
+          duration: tm.duration,
+          timeElapsed: 0,
+          progress: 0
+        }
+
+        expect(tm.emit).toHaveBeenCalledWith(TimerEvent.TICK, tickEventData)
+      })
+
       it('should call the tick method every (n)milliseconds based on the interval', () => {
         tm = new Timer(5000, 100)
         spyOn(tm, 'tick')
         tm.start()
         jasmine.clock().tick(500)
-        expect(tm.tick.calls.count()).toEqual(500 / 100)
+        expect(tm.tick.calls.count()).toEqual(500 / 100 + 1)
       })
 
       it('should not reset the startTime if the timer is TICKING', () => {
@@ -260,9 +274,9 @@ describe('Timer', () => {
       })
 
       it('should stop calling the tick method', () => {
-        spyOn(tm, 'tick')
         tm.start()
         tm.stop()
+        spyOn(tm, 'tick')
         jasmine.clock().tick(100)
         expect(tm.tick).not.toHaveBeenCalled()
       })

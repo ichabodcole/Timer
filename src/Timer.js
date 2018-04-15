@@ -37,6 +37,8 @@ export class Timer extends Ticker {
         if (this._startTime === null) {
           this._startTime = now
         }
+
+        this.tick()
       } else {
         throw new Error('Timer:start() ~ Valid duration must be set before calling start. Try a number greater than 0')
       }
