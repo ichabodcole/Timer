@@ -75,6 +75,26 @@ describe('Timer', () => {
         tm.duration = 2500
         expect(tm.duration).toEqual(2500)
       })
+
+      it('should complete the timer if the duration set to less than the current time elapsed', () => {
+        jasmine.clock()
+          .install()
+          .mockDate()
+
+        tm = new Timer(2000)
+        spyOn(tm, 'emit')
+        spyOn(tm, 'reset')
+
+        tm.start()
+        jasmine.clock().tick(1500)
+        tm.duration = 1200
+        tm.tick()
+
+        expect(tm.emit).toHaveBeenCalledWith(TimerEvent.COMPLETE)
+        expect(tm.reset).toHaveBeenCalled()
+
+        jasmine.clock().uninstall()
+      })
     })
 
     describe('timeElapsed', () => {
