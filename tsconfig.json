@@ -1,0 +1,47 @@
+{
+    "compilerOptions": {
+        "lib": [
+            "dom"
+        ],
+        "moduleResolution": "node",
+        "target": "ES5",
+        "module": "ES2015",
+        "outDir": "./dist",
+        "declaration": true,
+        "declarationDir": "dist/types",
+        "strict": true,
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "experimentalDecorators": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "sourceMap": true,
+        "plugins": [
+            {
+                "transform": "typescript-transform-paths",
+                "afterDeclarations": true
+            }
+        ],
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "src/*"
+            ],
+        },
+        "typeRoots": [
+            "./node_modules/@types",
+            "./types"
+        ]
+    },
+    "include": [
+        "./src/**/*"
+    ],
+    "exclude": [
+        "./node_modules",
+        "./examples",
+        "**/__test__/*",
+        "./types",
+        "./dist",
+    ],
+}
