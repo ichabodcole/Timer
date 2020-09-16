@@ -1,6 +1,6 @@
 {
   "name": "@ichabodcole/timer",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "author": "Cole Reed",
   "description": "A simple event based timer, so you know when you're doing, what you're doing.",
   "main": "dist/ticker.umd.js",
