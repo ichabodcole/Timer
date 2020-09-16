@@ -1,3 +1,21 @@
 {
-  "presets": ["env"]
+    "plugins": [
+        [
+            "@babel/plugin-transform-react-jsx",
+            {
+                "pragma": "h"
+            }
+        ],
+        [
+            "module-resolver",
+            {
+                "root": [
+                    "./src/"
+                ],
+                "alias": {
+                    "@": "./src"
+                }
+            }
+        ]
+    ]
 }

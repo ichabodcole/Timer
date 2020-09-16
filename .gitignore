@@ -1,5 +1,6 @@
 .DS_Store
+.cache
 npm-debug.log
-node_modules/
-*.sublime-*
-*.todo
+/node_modules
+/dist
+/examples/dist
