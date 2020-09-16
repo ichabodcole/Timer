@@ -1,0 +1,41 @@
+{
+    "compilerOptions": {
+        "lib": [
+            "dom"
+        ],
+        "jsx": "react",
+        "jsxFactory": "h",
+        "moduleResolution": "node",
+        "target": "ES5",
+        "module": "ES2015",
+        "outDir": "../examples/dist",
+        "strict": true,
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "experimentalDecorators": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "sourceMap": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [
+                "../src/*"
+            ],
+        },
+        "typeRoots": [
+            "../node_modules/@types",
+            "../types"
+        ]
+    },
+    "include": [
+        "../examples/src/**/*",
+        "../src/**/*"
+    ],
+    "exclude": [
+        "../node_modules",
+        "../**/__test__/*",
+        "../types",
+        "../dist"
+    ],
+}
