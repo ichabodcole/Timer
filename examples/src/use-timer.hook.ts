@@ -25,7 +25,7 @@ export function useTimer(timer: Timer): TimerHook {
     );
 
     timer.on(TimerEventTypes.TICK, handleTick);
-  }, []);
+  }, [timer]);
 
   function handleTick(event: TimerEvent): void {
     console.log(`Timer: ${event.type}, ${JSON.stringify(event.data)}`);

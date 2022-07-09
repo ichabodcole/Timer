@@ -1,7 +1,7 @@
 import { h } from "preact";
 import { Timer } from "@/timer";
 import { useTimer } from "./use-timer.hook";
-const ticker = new Timer(60000);
+const timer = new Timer(60000);
 
 export const App = (): h.JSX.Element => {
   const {
@@ -9,7 +9,7 @@ export const App = (): h.JSX.Element => {
     handleTimerStop,
     handleTimerReset,
     timeData,
-  } = useTimer(ticker);
+  } = useTimer(timer);
 
   return (
     <div>
