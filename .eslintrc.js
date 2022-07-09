@@ -7,10 +7,9 @@ module.exports = {
   plugins: ["@typescript-eslint"],
   extends: [
     "eslint:recommended",
-    "plugin:preact/recommended",
+    "preact",
     "plugin:@typescript-eslint/recommended",
-    "prettier/@typescript-eslint",
-    "plugin:prettier/recommended",
+    "prettier"
   ],
   settings: {
     react: {
@@ -27,11 +26,15 @@ module.exports = {
     "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
     // '@typescript-eslint/no-var-requires': 0,
     "@typescript-eslint/explicit-function-return-type": "warn",
+    "react/jsx-indent-props": [2, 2],
   },
   ignorePatterns: ["**/dist/**/*"],
   overrides: [
     {
-      files: ["**/__tests__/*.{j,t}s?(x)"],
+      files: [
+        "**/__tests__/*.{j,t}s?(x)",
+        "**/tests/unit/**/*.spec.{j,t}s?(x)",
+      ],
       env: {
         jest: true,
       },

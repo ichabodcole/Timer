@@ -1,24 +1,22 @@
 import { Timer } from "../src/timer";
 import { TimerStates } from "../src/timer-state";
 import { TimerEventTypes } from "../src/timer-event-type";
-import { MockDateNow } from "./test-util";
 import { TimerTickData } from "../src/timer-tick-data";
 import { TimerEvent } from "../src/timer-event";
 
 describe("Timer", () => {
   let tm: Timer;
-  let mdn: MockDateNow;
   let mockFn: jest.Mock;
 
   beforeEach(() => {
     tm = new Timer(5000);
-    mdn = new MockDateNow(0);
+    jest.useFakeTimers();
     mockFn = jest.fn();
     console.warn = jest.fn();
   });
 
   afterEach(() => {
-    mdn.reset();
+    jest.useRealTimers();
   });
 
   describe("constructor", () => {
@@ -103,7 +101,7 @@ describe("Timer", () => {
         tm.on(TimerEventTypes.COMPLETE, mockFn);
         tm.start();
 
-        mdn.advanceTime(1201);
+        jest.advanceTimersByTime(1201);
 
         tm.duration = 1200;
         tm.tick();
@@ -120,7 +118,8 @@ describe("Timer", () => {
 
       it("should return the amount of time elapsed since the timer started", () => {
         tm.start();
-        mdn.advanceTime(500);
+
+        jest.advanceTimersByTime(500);
 
         expect(tm.timeElapsed).toBe(500);
       });
@@ -130,7 +129,7 @@ describe("Timer", () => {
         tm.timeElapsed = 1000;
         tm.tick();
 
-        mdn.advanceTime(500);
+        jest.advanceTimersByTime(500);
 
         expect(tm.timeElapsed).toBe(1500);
       });
@@ -188,14 +187,6 @@ describe("Timer", () => {
   });
 
   describe("methods", () => {
-    beforeEach(() => {
-      jest.useFakeTimers();
-    });
-
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
     describe("start", () => {
       it("should be defined", () => {
         expect(tm.start).toBeDefined();
@@ -250,15 +241,12 @@ describe("Timer", () => {
       });
 
       it("should not reset the startTime if the timer is TICKING", () => {
-        const md = new MockDateNow(0);
         tm = new Timer(1000);
         tm.start();
 
-        md.advanceTime(300);
+        jest.advanceTimersByTime(300);
 
         expect(tm.timeElapsed).toEqual(300);
-
-        md.reset();
       });
     });
 
@@ -300,12 +288,14 @@ describe("Timer", () => {
         tm.duration = 1000;
 
         tm.start();
-        mdn.advanceTime(100);
+
+        jest.advanceTimersByTime(100);
 
         expect(tm.timeElapsed).toBe(100);
 
         tm.stop();
-        mdn.advanceTime(200);
+
+        jest.advanceTimersByTime(200);
 
         tm.start();
         tm.tick();
@@ -328,7 +318,7 @@ describe("Timer", () => {
 
       it("should set the timeElapsed value to 0", () => {
         tm.start();
-        mdn.advanceTime(1000);
+        jest.advanceTimersByTime(1000);
         tm.reset();
 
         expect(tm.timeElapsed).toBe(0);
@@ -336,7 +326,7 @@ describe("Timer", () => {
 
       it("should set the progress value to 0", () => {
         tm.start();
-        mdn.advanceTime(1000);
+        jest.advanceTimersByTime(1000);
         tm.reset();
 
         expect(tm.progress).toBe(0);
@@ -347,7 +337,8 @@ describe("Timer", () => {
     describe("tick", () => {
       it("should not emit a TICK event if start not been called", () => {
         tm.on(TimerEventTypes.TICK, mockFn);
-        mdn.advanceTime(2500);
+
+        jest.advanceTimersByTime(2500);
 
         tm.tick();
 
@@ -358,7 +349,7 @@ describe("Timer", () => {
         tm.on(TimerEventTypes.TICK, mockFn);
         tm.start();
 
-        mdn.advanceTime(2500);
+        jest.advanceTimersByTime(2500);
 
         tm.tick();
 
@@ -380,7 +371,9 @@ describe("Timer", () => {
         tm.on(TimerEventTypes.COMPLETE, mockFn);
         tm.duration = 500;
         tm.start();
-        mdn.advanceTime(510);
+
+        jest.advanceTimersByTime(510);
+
         tm.tick();
 
         expect(mockFn).toHaveBeenCalledWith(timerEvent);
@@ -391,7 +384,9 @@ describe("Timer", () => {
         tm.on(TimerEventTypes.RESET, mockFn);
         tm.duration = 500;
         tm.start();
-        mdn.advanceTime(510);
+
+        jest.advanceTimersByTime(510);
+
         tm.tick();
 
         expect(mockFn).toHaveBeenCalledWith(timerEvent);
@@ -402,7 +397,9 @@ describe("Timer", () => {
         tm.on(TimerEventTypes.STOP, mockFn);
         tm.duration = 500;
         tm.start();
-        mdn.advanceTime(510);
+
+        jest.advanceTimersByTime(510);
+
         tm.tick();
 
         expect(mockFn).toHaveBeenCalledWith(timerEvent);
@@ -421,8 +418,6 @@ describe("Timer", () => {
       });
 
       it("should stop events for the listener", () => {
-        jest.useFakeTimers();
-
         tm.on(TimerEventTypes.TICK, mockFn);
         tm.start();
         expect(mockFn).toHaveBeenCalledTimes(1);
@@ -433,8 +428,6 @@ describe("Timer", () => {
         tm.off(TimerEventTypes.TICK, mockFn);
         jest.advanceTimersByTime(500);
         expect(mockFn).toHaveBeenCalledTimes(2);
-
-        jest.useRealTimers();
       });
     });
   });
