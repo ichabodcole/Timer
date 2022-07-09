@@ -1,47 +1,48 @@
 {
     "compilerOptions": {
-        "lib": [
-            "dom"
+      "target": "ES5",
+      "lib": [
+        "DOM"
+      ],
+      "moduleResolution": "node",
+      "module": "ES2015",
+      "outDir": "./dist",
+      "declaration": true,
+      "declarationDir": "dist/types",
+      "strict": true,
+      "noImplicitAny": true,
+      "removeComments": true,
+      "preserveConstEnums": true,
+      "experimentalDecorators": true,
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "sourceMap": true,
+      "plugins": [
+        {
+          "transform": "typescript-transform-paths",
+          "afterDeclarations": true
+        }
+      ],
+      "baseUrl": ".",
+      "paths": {
+        "@/*": [
+          "src/*"
         ],
-        "moduleResolution": "node",
-        "target": "ES5",
-        "module": "ES2015",
-        "outDir": "./dist",
-        "declaration": true,
-        "declarationDir": "dist/types",
-        "strict": true,
-        "noImplicitAny": true,
-        "removeComments": true,
-        "preserveConstEnums": true,
-        "experimentalDecorators": true,
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "sourceMap": true,
-        "plugins": [
-            {
-                "transform": "typescript-transform-paths",
-                "afterDeclarations": true
-            }
-        ],
-        "baseUrl": ".",
-        "paths": {
-            "@/*": [
-                "src/*"
-            ],
-        },
-        "typeRoots": [
-            "./node_modules/@types",
-            "./types"
-        ]
+      },
+      "typeRoots": [
+        "./node_modules/@types",
+        "./types"
+      ],
+      "skipLibCheck": true /* Skip type checking all .d.ts files. */
     },
     "include": [
-        "./src/**/*"
+      "./src/**/*"
     ],
     "exclude": [
-        "./node_modules",
-        "./examples",
-        "**/__test__/*",
-        "./types",
-        "./dist",
+      "./node_modules",
+      "./examples",
+      "**/__test__/*",
+      "./types",
+      "./dist",
     ],
-}
+  }
